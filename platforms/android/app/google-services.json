@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "713515041527",
+    "project_id": "fitnessappcordova",
+    "storage_bucket": "fitnessappcordova.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:713515041527:android:311420abbbf6c12a3949f2",
+        "android_client_info": {
+          "package_name": "com.example.fitness"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "713515041527-3lk4ke4hun4tm3m0vsq7tka9ujfd6840.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fitness",
+            "certificate_hash": "ee945254a69645711ce5afb230bc968e311c7522"
+          }
+        },
+        {
+          "client_id": "713515041527-opnka9a94tob87pt74ad565b58lupong.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxygxlDgCJQp_irxzFFbvMHrArO36ZNM8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "713515041527-opnka9a94tob87pt74ad565b58lupong.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
