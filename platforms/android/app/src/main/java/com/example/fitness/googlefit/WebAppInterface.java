@@ -20,8 +20,8 @@ public class WebAppInterface {
     }
 
     @JavascriptInterface
-    public void getDataToGenerateGraph(String type, String frequency, int timestamp) {
+    public void getDataToGenerateGraph(String type, String frequency, long timestamp) {
         Log.d("mytag", "getDataToGenerateGraph() called. type:" + type + " frequency: " + frequency + " timestamp:" + timestamp);
-        listener.setGraphData(type, frequency, timestamp);
+        listener.loadActivityData(type, frequency, timestamp);
     }
 }

@@ -33,14 +33,20 @@ import org.apache.cordova.*;
 
 import com.example.fitness.googlefit.GoogleFitStatusListener;
 import com.example.fitness.googlefit.GoogleFitUtil;
+import com.example.fitness.googlefit.GraphValueUtil;
 import com.example.fitness.googlefit.WebAppInterface;
 import com.getvisitapp.google_fit.GenericListener;
+import com.getvisitapp.google_fit.pojo.HealthDataGraphValues;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends CordovaActivity implements GoogleFitStatusListener, GenericListener {
     GoogleFitUtil googleFitUtil;
     WebAppInterface webAppInterface;
     WebView webView;
     ActivityResultLauncher<String> fitnessPermissionResultLauncher;
+    GraphValueUtil graphValueUtil;
 
 
     @Override
@@ -64,6 +70,8 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
 
         googleFitUtil = new GoogleFitUtil(this, this);
         googleFitUtil.init();
+
+        graphValueUtil = new GraphValueUtil(googleFitUtil.getGoogleFitConnector(), this);
 
 
         if (googleFitUtil.getStepsCounter().hasAccess()) {
@@ -92,7 +100,7 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
 
     @Override
     public void onFitnessPermissionGranted() {
-        Log.d("mytag", "onGrandFitPermission() called");
+        Log.d("mytag", "onFitnessPermissionGranted() called");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -108,43 +116,81 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
     }
 
     @Override
-    public void setGraphData(String type, String frequency, int timestamp) {
-        Log.d("mytag", "updateData() called.");
+    public void loadActivityData(String type, String frequency, long timestamp) {
+        Log.d("mytag", "loadActivityData() called.");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (type != null && frequency != null) {
-                    if (type.equals("steps")) {
-                        switch (frequency) {
-                            case "day": {
-                                webView.evaluateJavascript(
-                                        "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],[100,200,300], 'steps', 'day')",
-                                        null
-                                );
-                                break;
-                            }
-                            case "week": {
-                                webView.evaluateJavascript(
-                                        "DetailedGraph.updateData([1,2,3,4,5,6,7],[100,200,300,10000], 'steps', 'week')",
-                                        null
-                                );
-                                break;
-                            }
-                            case "month": {
-                                webView.evaluateJavascript(
-                                        "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],[100,200,300,1000,400,6000], 'steps', 'month')",
-                                        null
-                                );
-                                break;
-                            }
-                            default: {
-
-                            }
-                        }
-                    }
+                    graphValueUtil.getActivityData(type, frequency, timestamp);
                 }
             }
         });
+
+    }
+
+    @Override
+    public void updateGraph(String type, String frequency, ArrayList<Integer> values, int averageTime, HealthDataGraphValues graphValues) {
+        if (type != null && frequency != null) {
+            if (type.equals("sleep")) {
+                switch (frequency) {
+                    case "day": {
+                        String sleepDuration = graphValues.getSleepCard().getFormattedSleep();
+
+                        String value = "window.updateSleepForAndroid('" + sleepDuration + "','" + graphValues.getSleepCard().getStartSleepTimeFormatted(graphValues.getSleepCard().getStartSleepTime()) + "','" + graphValues.getSleepCard().getStartSleepTimeFormatted(graphValues.getSleepCard().getEndSleepTime()) + "')";
+
+                        Log.d(TAG, "run: getSleep minutes daily: " + value);
+                        webView.evaluateJavascript(
+                                value,
+                                null
+                        );
+                        break;
+                    }
+                    case "week": {
+                        String value = "DetailedGraph.updateSleepData(JSON.stringify(" + graphValues.getSleepDataForWeeklyGraphInJson() + "));"
+                                + "$('.sleep-duration').text('" + graphValues.getAverageSleep() + "')";
+                        Log.d(TAG, "run: getSleep minutes daily: " + value);
+                        webView.evaluateJavascript(
+                                value,
+                                null
+                        );
+                        break;
+                    }
+                }
+            } else {
+                switch (frequency) {
+                    case "day": {
+                        String value = "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]," + values + ", '" + type + "', 'day','" + averageTime + "')";
+                        LOG.d("mytag", "valueString: " + value);
+                        webView.evaluateJavascript(
+                                value,
+                                null
+                        );
+                        break;
+                    }
+                    case "week": {
+                        String value = "DetailedGraph.updateData([1,2,3,4,5,6,7]," + values + ",'" + type + "', 'week','" + averageTime + "')";
+                        LOG.d("mytag", "valueString: " + value);
+                        webView.evaluateJavascript(
+                                value,
+                                null
+                        );
+                        break;
+                    }
+                    case "month": {
+                        String value = "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]," + values + ",'" + type + "', 'month','" + averageTime + "')";
+                        LOG.d("mytag", "valueString: " + value);
+                        webView.evaluateJavascript(
+                                value,
+                                null
+                        );
+                        break;
+                    }
+                }
+                Log.d("mytag", "updateGraph() called. " + type + " frequency: " + frequency + " values:" + values);
+
+            }
+        }
 
     }
 
