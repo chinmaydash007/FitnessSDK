@@ -107,6 +107,47 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
         loadUrl(urlString);
     }
 
+    @Override
+    public void setGraphData(String type, String frequency, int timestamp) {
+        Log.d("mytag", "updateData() called.");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (type != null && frequency != null) {
+                    if (type.equals("steps")) {
+                        switch (frequency) {
+                            case "day": {
+                                webView.evaluateJavascript(
+                                        "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],[100,200,300], 'steps', 'day')",
+                                        null
+                                );
+                                break;
+                            }
+                            case "week": {
+                                webView.evaluateJavascript(
+                                        "DetailedGraph.updateData([1,2,3,4,5,6,7],[100,200,300,10000], 'steps', 'week')",
+                                        null
+                                );
+                                break;
+                            }
+                            case "month": {
+                                webView.evaluateJavascript(
+                                        "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],[100,200,300,1000,400,6000], 'steps', 'month')",
+                                        null
+                                );
+                                break;
+                            }
+                            default: {
+
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {

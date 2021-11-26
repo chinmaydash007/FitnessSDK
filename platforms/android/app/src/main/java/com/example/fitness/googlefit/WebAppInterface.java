@@ -13,9 +13,15 @@ public class WebAppInterface {
     @JavascriptInterface
     public void connectToGoogleFit() {
 
-        Log.d("mytag","connectToGoogleFit() called");
+        Log.d("mytag", "connectToGoogleFit() called");
 
         listener.askForPermissions();
 
+    }
+
+    @JavascriptInterface
+    public void getDataToGenerateGraph(String type, String frequency, int timestamp) {
+        Log.d("mytag", "getDataToGenerateGraph() called. type:" + type + " frequency: " + frequency + " timestamp:" + timestamp);
+        listener.setGraphData(type, frequency, timestamp);
     }
 }
