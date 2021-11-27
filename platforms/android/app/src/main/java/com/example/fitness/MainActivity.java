@@ -135,9 +135,8 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
             if (type.equals("sleep")) {
                 switch (frequency) {
                     case "day": {
-                        String sleepDuration = graphValues.getSleepCard().getFormattedSleep();
 
-                        String value = "window.updateSleepForAndroid('" + sleepDuration + "','" + graphValues.getSleepCard().getStartSleepTimeFormatted(graphValues.getSleepCard().getStartSleepTime()) + "','" + graphValues.getSleepCard().getStartSleepTimeFormatted(graphValues.getSleepCard().getEndSleepTime()) + "')";
+                        String value = "DetailedGraph.updateDailySleep("+ graphValues.getSleepCard().getStartSleepTime() + "," + graphValues.getSleepCard().getEndSleepTime() + ")";
 
                         Log.d(TAG, "run: getSleep minutes daily: " + value);
                         webView.evaluateJavascript(
@@ -147,8 +146,9 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
                         break;
                     }
                     case "week": {
-                        String value = "DetailedGraph.updateSleepData(JSON.stringify(" + graphValues.getSleepDataForWeeklyGraphInJson() + "));"
-                                + "$('.sleep-duration').text('" + graphValues.getAverageSleep() + "')";
+                        String value = "DetailedGraph.updateSleepData(JSON.stringify(" + graphValues.getSleepDataForWeeklyGraphInJson() + "));";
+
+
                         Log.d(TAG, "run: getSleep minutes daily: " + value);
                         webView.evaluateJavascript(
                                 value,
