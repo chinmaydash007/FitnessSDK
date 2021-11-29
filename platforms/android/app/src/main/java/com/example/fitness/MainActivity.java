@@ -33,20 +33,17 @@ import org.apache.cordova.*;
 
 import com.example.fitness.googlefit.GoogleFitStatusListener;
 import com.example.fitness.googlefit.GoogleFitUtil;
-import com.example.fitness.googlefit.GraphValueUtil;
 import com.example.fitness.googlefit.WebAppInterface;
 import com.getvisitapp.google_fit.GenericListener;
 import com.getvisitapp.google_fit.pojo.HealthDataGraphValues;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MainActivity extends CordovaActivity implements GoogleFitStatusListener, GenericListener {
     GoogleFitUtil googleFitUtil;
     WebAppInterface webAppInterface;
     WebView webView;
     ActivityResultLauncher<String> fitnessPermissionResultLauncher;
-    GraphValueUtil graphValueUtil;
 
 
     @Override
@@ -70,8 +67,6 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
 
         googleFitUtil = new GoogleFitUtil(this, this);
         googleFitUtil.init();
-
-        graphValueUtil = new GraphValueUtil(googleFitUtil.getGoogleFitConnector(), this);
 
 
         if (googleFitUtil.getStepsCounter().hasAccess()) {
@@ -122,7 +117,7 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
             @Override
             public void run() {
                 if (type != null && frequency != null) {
-                    graphValueUtil.getActivityData(type, frequency, timestamp);
+                    googleFitUtil.getActivityData(type, frequency, timestamp);
                 }
             }
         });
