@@ -59,7 +59,7 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
         webView = (WebView) appView.getEngine().getView();
         webView.getSettings().setJavaScriptEnabled(true);
 
-        googleFitUtil = new GoogleFitUtil(this, this,"713515041527-opnka9a94tob87pt74ad565b58lupong.apps.googleusercontent.com","https://web.getvisitapp.xyz/");
+        googleFitUtil = new GoogleFitUtil(this, this, "713515041527-opnka9a94tob87pt74ad565b58lupong.apps.googleusercontent.com", "https://web.getvisitapp.xyz/");
         webView.addJavascriptInterface(googleFitUtil.getWebAppInterface(), "Android");
         googleFitUtil.init();
 
@@ -78,6 +78,10 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
         });
     }
 
+    /**
+     * This get called from the webview when user taps on [Connect To Google Fit]
+     */
+
     @Override
     public void askForPermissions() {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -87,6 +91,11 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
             googleFitUtil.askForGoogleFitPermission();
         }
     }
+
+    /**
+     * 1A
+     * This get called after user has granted all the fitness permission
+     */
 
     @Override
     public void onFitnessPermissionGranted() {
@@ -100,22 +109,13 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
 
     }
 
+    /**
+     * 1B
+     * This is used to load the Daily Fitness Data into the Home Tab webView.
+     */
     @Override
     public void loadWebUrl(String urlString) {
         loadUrl(urlString);
-    }
-
-    @Override
-    public void requestActivityData(String type, String frequency, long timestamp) {
-        Log.d(TAG, "requestActivityData() called.");
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (type != null && frequency != null) {
-                    googleFitUtil.getActivityData(type, frequency, timestamp);
-                }
-            }
-        });
     }
 
 
@@ -130,6 +130,30 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
             }
         }
     }
+
+
+    /**
+     * 2A
+     * This get used for requesting data that are to be shown in detailed graph
+     */
+
+    @Override
+    public void requestActivityData(String type, String frequency, long timestamp) {
+        Log.d(TAG, "requestActivityData() called.");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (type != null && frequency != null) {
+                    googleFitUtil.getActivityData(type, frequency, timestamp);
+                }
+            }
+        });
+    }
+
+    /**
+     * 2B
+     * This get called when google fit return the detailed graph data that was requested previously
+     */
 
 
     @Override
