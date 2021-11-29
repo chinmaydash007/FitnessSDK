@@ -1,14 +1,13 @@
 package com.example.fitness.googlefit;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 
 import com.getvisitapp.google_fit.GenericListener;
 import com.getvisitapp.google_fit.GoogleFitConnector;
 import com.getvisitapp.google_fit.StepsCounter;
 import com.getvisitapp.google_fit.pojo.HealthDataGraphValues;
-
-import org.apache.cordova.LOG;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,12 +18,15 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class GoogleFitUtil {
+public class GoogleFitUtil implements GenericListener {
     String default_web_client_id = "713515041527-opnka9a94tob87pt74ad565b58lupong.apps.googleusercontent.com";
     String TAG = "mytag";
 
 
     private Activity context;
+    WebAppInterface webAppInterface;
+
+
     GoogleFitStatusListener listener;
     private Subscriber<SleepStepsData> sleepStepsDataSubscriber;
     private Subscriber<HealthDataGraphValues> healthDataGraphValuesSubscriber;
@@ -32,6 +34,7 @@ public class GoogleFitUtil {
     public GoogleFitUtil(Activity context, GoogleFitStatusListener listener) {
         this.context = context;
         this.listener = listener;
+        this.webAppInterface = new WebAppInterface(listener);
     }
 
     private StepsCounter stepsCounter;
@@ -43,6 +46,10 @@ public class GoogleFitUtil {
 
     public GoogleFitConnector getGoogleFitConnector() {
         return googleFitConnector;
+    }
+
+    public WebAppInterface getWebAppInterface() {
+        return webAppInterface;
     }
 
     public void init() {
@@ -274,7 +281,7 @@ public class GoogleFitUtil {
                         switch (frequency) {
                             case "day": {
 
-                                String value = "DetailedGraph.updateDailySleep("+ graphValues.getSleepCard().getStartSleepTime() + "," + graphValues.getSleepCard().getEndSleepTime() + ")";
+                                String value = "DetailedGraph.updateDailySleep(" + graphValues.getSleepCard().getStartSleepTime() + "," + graphValues.getSleepCard().getEndSleepTime() + ")";
 
                                 Log.d(TAG, "run: getSleep minutes daily: " + value);
                                 listener.loadGraphDataUrl(value);
@@ -293,19 +300,19 @@ public class GoogleFitUtil {
                         switch (frequency) {
                             case "day": {
                                 String value = "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]," + graphValues.getValues() + ", '" + type + "', 'day','" + graphValues.getTotalActivityTimeInMinutes() + "')";
-                                LOG.d(TAG, "valueString: " + value);
+                                Log.d(TAG, "valueString: " + value);
                                 listener.loadGraphDataUrl(value);
                                 break;
                             }
                             case "week": {
                                 String value = "DetailedGraph.updateData([1,2,3,4,5,6,7]," + graphValues.getValues() + ",'" + type + "', 'week','" + graphValues.getTotalActivityTimeInMinutes() + "')";
-                                LOG.d(TAG, "valueString: " + value);
+                                Log.d(TAG, "valueString: " + value);
                                 listener.loadGraphDataUrl(value);
                                 break;
                             }
                             case "month": {
                                 String value = "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]," + graphValues.getValues() + ",'" + type + "', 'month','" + graphValues.getTotalActivityTimeInMinutes() + "')";
-                                LOG.d(TAG, "valueString: " + value);
+                                Log.d(TAG, "valueString: " + value);
                                 listener.loadGraphDataUrl(value);
                                 break;
                             }
@@ -319,5 +326,22 @@ public class GoogleFitUtil {
         };
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (this.googleFitConnector != null) {
+            this.googleFitConnector.onActivityResult(requestCode, resultCode, intent);
+        }
 
+        if (this.stepsCounter != null) {
+            this.stepsCounter.onActivityResult(requestCode, resultCode, intent, this);
+        }
+
+    }
+
+
+    @Override
+    public void onJobDone(String s) {
+        Log.d(TAG, "onJobDone() called email: " + s);
+
+        listener.onFitnessPermissionGranted();
+    }
 }

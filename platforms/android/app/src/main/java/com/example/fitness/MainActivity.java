@@ -36,10 +36,9 @@ import com.example.fitness.googlefit.GoogleFitUtil;
 import com.example.fitness.googlefit.WebAppInterface;
 import com.getvisitapp.google_fit.GenericListener;
 
-public class MainActivity extends CordovaActivity implements GoogleFitStatusListener, GenericListener {
+public class MainActivity extends CordovaActivity implements GoogleFitStatusListener {
     String TAG="mytag";
     GoogleFitUtil googleFitUtil;
-    WebAppInterface webAppInterface;
     WebView webView;
     ActivityResultLauncher<String> fitnessPermissionResultLauncher;
 
@@ -60,11 +59,11 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
         webView = (WebView) appView.getEngine().getView();
         webView.getSettings().setJavaScriptEnabled(true);
 
-        webAppInterface = new WebAppInterface(this);
-        webView.addJavascriptInterface(webAppInterface, "Android");
-
         googleFitUtil = new GoogleFitUtil(this, this);
+        webView.addJavascriptInterface(googleFitUtil.getWebAppInterface(), "Android");
         googleFitUtil.init();
+
+
 
 
         if (googleFitUtil.getStepsCounter().hasAccess()) {
@@ -110,7 +109,7 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
 
     @Override
     public void requestActivityData(String type, String frequency, long timestamp) {
-        Log.d(TAG, "loadActivityData() called.");
+        Log.d(TAG, "requestActivityData() called.");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -124,24 +123,12 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (googleFitUtil.getGoogleFitConnector() != null) {
-            googleFitUtil.getGoogleFitConnector().onActivityResult(requestCode, resultCode, intent);
-        }
-
-        if (googleFitUtil.getStepsCounter() != null) {
-            googleFitUtil.getStepsCounter().onActivityResult(requestCode, resultCode, intent, this);
-        }
-
+        googleFitUtil.onActivityResult(requestCode,resultCode,intent);
 
         super.onActivityResult(requestCode, resultCode, intent);
 
     }
 
-    @Override
-    public void onJobDone(String s) {
-        Log.d(TAG, "onJobDone() called email: " + s);
-        onFitnessPermissionGranted();
-    }
 
     @Override
     public void loadGraphDataUrl(String url) {
