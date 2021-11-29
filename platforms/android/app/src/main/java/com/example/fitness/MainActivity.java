@@ -37,7 +37,7 @@ import org.apache.cordova.CordovaActivity;
 
 
 public class MainActivity extends CordovaActivity implements GoogleFitStatusListener {
-    String TAG="mytag";
+    String TAG = "mytag";
     GoogleFitUtil googleFitUtil;
     WebView webView;
     ActivityResultLauncher<String> fitnessPermissionResultLauncher;
@@ -62,9 +62,6 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
         googleFitUtil = new GoogleFitUtil(this, this);
         webView.addJavascriptInterface(googleFitUtil.getWebAppInterface(), "Android");
         googleFitUtil.init();
-
-        
-
 
 
         if (googleFitUtil.getStepsCounter().hasAccess()) {
@@ -124,10 +121,14 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        googleFitUtil.onActivityResult(requestCode,resultCode,intent);
+        Log.d("mytag", "onActivityResult called. requestCode: " + requestCode + " resultCode: " + resultCode);
 
         super.onActivityResult(requestCode, resultCode, intent);
-
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 4097 || requestCode == 1900) {
+                googleFitUtil.onActivityResult(requestCode, resultCode, intent);
+            }
+        }
     }
 
 
