@@ -35,11 +35,9 @@ import com.example.fitness.googlefit.GoogleFitStatusListener;
 import com.example.fitness.googlefit.GoogleFitUtil;
 import com.example.fitness.googlefit.WebAppInterface;
 import com.getvisitapp.google_fit.GenericListener;
-import com.getvisitapp.google_fit.pojo.HealthDataGraphValues;
-
-import java.util.ArrayList;
 
 public class MainActivity extends CordovaActivity implements GoogleFitStatusListener, GenericListener {
+    String TAG="mytag";
     GoogleFitUtil googleFitUtil;
     WebAppInterface webAppInterface;
     WebView webView;
@@ -95,7 +93,7 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
 
     @Override
     public void onFitnessPermissionGranted() {
-        Log.d("mytag", "onFitnessPermissionGranted() called");
+        Log.d(TAG, "onFitnessPermissionGranted() called");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -111,8 +109,8 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
     }
 
     @Override
-    public void loadActivityData(String type, String frequency, long timestamp) {
-        Log.d("mytag", "loadActivityData() called.");
+    public void requestActivityData(String type, String frequency, long timestamp) {
+        Log.d(TAG, "loadActivityData() called.");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -121,72 +119,6 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
                 }
             }
         });
-
-    }
-
-    @Override
-    public void updateGraph(String type, String frequency, ArrayList<Integer> values, int averageTime, HealthDataGraphValues graphValues) {
-        if (type != null && frequency != null) {
-            if (type.equals("sleep")) {
-                switch (frequency) {
-                    case "day": {
-
-                        String value = "DetailedGraph.updateDailySleep("+ graphValues.getSleepCard().getStartSleepTime() + "," + graphValues.getSleepCard().getEndSleepTime() + ")";
-
-                        Log.d(TAG, "run: getSleep minutes daily: " + value);
-                        webView.evaluateJavascript(
-                                value,
-                                null
-                        );
-                        break;
-                    }
-                    case "week": {
-                        String value = "DetailedGraph.updateSleepData(JSON.stringify(" + graphValues.getSleepDataForWeeklyGraphInJson() + "));";
-
-
-                        Log.d(TAG, "run: getSleep minutes daily: " + value);
-                        webView.evaluateJavascript(
-                                value,
-                                null
-                        );
-                        break;
-                    }
-                }
-            } else {
-                switch (frequency) {
-                    case "day": {
-                        String value = "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]," + values + ", '" + type + "', 'day','" + averageTime + "')";
-                        LOG.d("mytag", "valueString: " + value);
-                        webView.evaluateJavascript(
-                                value,
-                                null
-                        );
-                        break;
-                    }
-                    case "week": {
-                        String value = "DetailedGraph.updateData([1,2,3,4,5,6,7]," + values + ",'" + type + "', 'week','" + averageTime + "')";
-                        LOG.d("mytag", "valueString: " + value);
-                        webView.evaluateJavascript(
-                                value,
-                                null
-                        );
-                        break;
-                    }
-                    case "month": {
-                        String value = "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]," + values + ",'" + type + "', 'month','" + averageTime + "')";
-                        LOG.d("mytag", "valueString: " + value);
-                        webView.evaluateJavascript(
-                                value,
-                                null
-                        );
-                        break;
-                    }
-                }
-                Log.d("mytag", "updateGraph() called. " + type + " frequency: " + frequency + " values:" + values);
-
-            }
-        }
-
     }
 
 
@@ -207,7 +139,15 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
 
     @Override
     public void onJobDone(String s) {
-        Log.d("mytag", "onJobDone() called email: " + s);
+        Log.d(TAG, "onJobDone() called email: " + s);
         onFitnessPermissionGranted();
+    }
+
+    @Override
+    public void loadGraphDataUrl(String url) {
+        webView.evaluateJavascript(
+                url,
+                null
+        );
     }
 }

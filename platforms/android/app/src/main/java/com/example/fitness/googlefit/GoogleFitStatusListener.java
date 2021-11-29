@@ -8,6 +8,6 @@ public interface GoogleFitStatusListener {
     void askForPermissions();
     void onFitnessPermissionGranted();
     void loadWebUrl(String urlString);
-    void loadActivityData(String type, String frequency, long timestamp);
-    void updateGraph(String type, String frequency, ArrayList<Integer> values, int averageTime, HealthDataGraphValues graphValues);
+    void requestActivityData(String type, String frequency, long timestamp);
+    void loadGraphDataUrl(String url);
 }

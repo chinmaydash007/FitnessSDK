@@ -22,6 +22,6 @@ public class WebAppInterface {
     @JavascriptInterface
     public void getDataToGenerateGraph(String type, String frequency, long timestamp) {
         Log.d("mytag", "getDataToGenerateGraph() called. type:" + type + " frequency: " + frequency + " timestamp:" + timestamp);
-        listener.loadActivityData(type, frequency, timestamp);
+        listener.requestActivityData(type, frequency, timestamp);
     }
 }

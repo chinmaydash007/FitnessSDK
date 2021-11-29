@@ -8,6 +8,8 @@ import com.getvisitapp.google_fit.GoogleFitConnector;
 import com.getvisitapp.google_fit.StepsCounter;
 import com.getvisitapp.google_fit.pojo.HealthDataGraphValues;
 
+import org.apache.cordova.LOG;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
@@ -267,8 +269,52 @@ public class GoogleFitUtil {
 
             @Override
             public void onNext(HealthDataGraphValues graphValues) {
+                if (type != null && frequency != null) {
+                    if (type.equals("sleep")) {
+                        switch (frequency) {
+                            case "day": {
 
-                listener.updateGraph(type, frequency, graphValues.getValues(), graphValues.getTotalActivityTimeInMinutes(), graphValues);
+                                String value = "DetailedGraph.updateDailySleep("+ graphValues.getSleepCard().getStartSleepTime() + "," + graphValues.getSleepCard().getEndSleepTime() + ")";
+
+                                Log.d(TAG, "run: getSleep minutes daily: " + value);
+                                listener.loadGraphDataUrl(value);
+                                break;
+                            }
+                            case "week": {
+                                String value = "DetailedGraph.updateSleepData(JSON.stringify(" + graphValues.getSleepDataForWeeklyGraphInJson() + "));";
+
+
+                                Log.d(TAG, "run: getSleep minutes daily: " + value);
+                                listener.loadGraphDataUrl(value);
+                                break;
+                            }
+                        }
+                    } else {
+                        switch (frequency) {
+                            case "day": {
+                                String value = "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]," + graphValues.getValues() + ", '" + type + "', 'day','" + graphValues.getTotalActivityTimeInMinutes() + "')";
+                                LOG.d(TAG, "valueString: " + value);
+                                listener.loadGraphDataUrl(value);
+                                break;
+                            }
+                            case "week": {
+                                String value = "DetailedGraph.updateData([1,2,3,4,5,6,7]," + graphValues.getValues() + ",'" + type + "', 'week','" + graphValues.getTotalActivityTimeInMinutes() + "')";
+                                LOG.d(TAG, "valueString: " + value);
+                                listener.loadGraphDataUrl(value);
+                                break;
+                            }
+                            case "month": {
+                                String value = "DetailedGraph.updateData([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]," + graphValues.getValues() + ",'" + type + "', 'month','" + graphValues.getTotalActivityTimeInMinutes() + "')";
+                                LOG.d(TAG, "valueString: " + value);
+                                listener.loadGraphDataUrl(value);
+                                break;
+                            }
+                        }
+                        Log.d(TAG, "updateGraph() called. " + type + " frequency: " + frequency + " values:" + graphValues.getValues());
+
+                    }
+                }
+
             }
         };
     }
