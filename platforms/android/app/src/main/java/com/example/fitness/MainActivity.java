@@ -29,12 +29,12 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
-import org.apache.cordova.*;
+import com.getvisitapp.google_fit.StepsCounter;
+import com.getvisitapp.google_fit.data.GoogleFitStatusListener;
+import com.getvisitapp.google_fit.data.GoogleFitUtil;
 
-import com.example.fitness.googlefit.GoogleFitStatusListener;
-import com.example.fitness.googlefit.GoogleFitUtil;
-import com.example.fitness.googlefit.WebAppInterface;
-import com.getvisitapp.google_fit.GenericListener;
+import org.apache.cordova.CordovaActivity;
+
 
 public class MainActivity extends CordovaActivity implements GoogleFitStatusListener {
     String TAG="mytag";
@@ -63,6 +63,7 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
         webView.addJavascriptInterface(googleFitUtil.getWebAppInterface(), "Android");
         googleFitUtil.init();
 
+        
 
 
 
