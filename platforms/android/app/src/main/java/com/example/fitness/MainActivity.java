@@ -59,7 +59,7 @@ public class MainActivity extends CordovaActivity implements GoogleFitStatusList
         webView = (WebView) appView.getEngine().getView();
         webView.getSettings().setJavaScriptEnabled(true);
 
-        googleFitUtil = new GoogleFitUtil(this, this);
+        googleFitUtil = new GoogleFitUtil(this, this,"713515041527-opnka9a94tob87pt74ad565b58lupong.apps.googleusercontent.com","https://web.getvisitapp.xyz/");
         webView.addJavascriptInterface(googleFitUtil.getWebAppInterface(), "Android");
         googleFitUtil.init();
 
